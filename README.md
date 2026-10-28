@@ -2,39 +2,85 @@
 
 Website for **Kuch Bhi Opinion (KBO)** — [kuchbhiopinion.com](https://kuchbhiopinion.com/).
 
-A one-page static site: plain HTML, CSS and vanilla JavaScript. No framework, no build step, no backend, no trackers.
+A static site built with **Jekyll as built in to GitHub Pages** (GitHub builds it; nothing to install online). Plain HTML, CSS and vanilla JavaScript on the page itself. No framework, no backend, no trackers. Home page, auto-updating meme gallery, blog with authors, RSS feed.
 
 ## Files
 
 | Path | What it is |
 | --- | --- |
-| `index.html` | The whole page: header, hero, Latest Shorts, Memes, Follow, Contact, footer, meme lightbox |
-| `styles.css` | All styles (mobile-first, dark theme) |
-| `script.js` | Footer year, mobile menu, meme lightbox |
+| `index.html` | Home page (front matter + sections: hero, Shorts, Memes, latest articles, Follow, Contact) |
+| `_layouts/` | `default.html` (page shell) and `post.html` (article page) |
+| `_includes/` | Header, footer, icons, lightbox, meme grid, article cards |
+| `_config.yml` | Site title, URL, plugins (`jekyll-feed`, `jekyll-sitemap`, `jekyll-seo-tag`) |
+| `_posts/` | Articles (Markdown) |
+| `_data/authors.yml` | Authors (name, one-line bio, optional photo) |
+| `blog/index.html`, `authors/index.html` | The Blog page and the Authors page |
+| `styles.css`, `script.js` | All styles and behaviour (menu, lightbox, "Load more", copy link) |
 | `assets/brand/` | Logos and square profile image (also used for sharing previews) |
-| `assets/memes/` | The 10 meme posts shown in the gallery (4:5) |
-| `assets/icons/` | Favicon (32 px) and apple-touch-icon (180 px) |
-| `favicon.ico` | Browser tab icon (16, 32, 48 px) |
-| `robots.txt`, `sitemap.xml` | For search engines |
+| `assets/memes/` | Meme images; the gallery is built from this folder automatically |
+| `assets/blog/`, `assets/authors/` | Article cover images and author photos |
+| `assets/icons/`, `favicon.ico` | Favicons |
+| `.pages.yml` | Pages CMS setup (browser forms for articles, authors and uploads) |
+| `robots.txt` | For search engines (`sitemap.xml` and `feed.xml` are generated) |
 | `CNAME` | Custom domain for GitHub Pages (`kuchbhiopinion.com`) |
-| `.nojekyll` | Tells GitHub Pages to serve the files as they are |
 
 ## Preview on your computer
 
-Open a terminal in this folder and run:
+Jekyll turns the files into the site, so the plain `python3 -m http.server` no longer shows the finished page. Once only: install Ruby and Bundler, then in this folder run:
 
 ```bash
-python3 -m http.server 8000
+bundle install
 ```
 
-Then open <http://localhost:8000> in a browser. Stop the server with `Ctrl + C`.
+Every time you want to preview:
 
-Use the local server rather than double-clicking `index.html`: the YouTube embed shows "Error 153" when the page is opened as a file.
+```bash
+bundle exec jekyll serve
+```
 
-## Adding a new meme
+Open <http://localhost:4000>. Stop with `Ctrl + C`. (If you see an encoding error, run `export LANG=C.UTF-8` first.) The YouTube embed needs a real web address, so always preview through the server and not by double-clicking a file.
 
-1. Save the image as a 4:5 PNG (1080 × 1350) in `assets/memes/`, named like `11_Short_Title.png`.
-2. In `index.html`, copy one `<li>` in the `meme-grid` list and change the file name (twice) and the `alt` text.
+## How to publish an article / add a meme / add an author
+
+Anyone other than the site owner works through a **pull request** (Pages CMS creates it for you). The owner approves and merges; nothing goes live without that. Keep everything non-political and original.
+
+### Easiest way: Pages CMS (browser form)
+
+1. Open <https://app.pagescms.org> and sign in with GitHub. The owner invites writers to the repository.
+2. Choose this repository. You will see **Articles**, **Authors** and the media folders.
+
+### Publish an article
+
+1. In Pages CMS: **Articles → Add an entry**. Fill title, **author id** (see the Authors list), date, cover image (1200 × 630), tags, short summary, and write the article.
+2. Save. Writers other than the owner: save to a new branch and open a pull request. The owner merges it.
+3. About a minute after merging, the article is live on `/blog/` and in the RSS feed (`/feed.xml`).
+
+Without Pages CMS: add a file to `_posts/` named `YYYY-MM-DD-short-title.md`, copy the top block ("front matter") from `_posts/2026-10-28-sample-article.md` and change it, then write below it. The sample article is only an example; delete it when real articles exist.
+
+### Add a meme
+
+1. Make a 4:5 image (1080 × 1350 px, PNG).
+2. Name it `YYYY-MM-DD-short-name.png` (for example `2026-11-02-chai-break.png`). The date decides the order (newest first); the words after the date become the caption.
+3. Upload it to `assets/memes/` (Pages CMS: **Memes → Upload**, or GitHub: *Add file → Upload files*). That is all: no code to edit. The gallery shows 12 memes and a "Load more" button for the rest.
+
+### Add an author
+
+1. Pages CMS: **Authors → add an item**, or edit `_data/authors.yml` and add a block:
+
+   ```yaml
+   - id: priya
+     name: Priya
+     bio: "Chai, memes aur Monday ki shikayat."
+     photo: /assets/authors/priya.jpg   # optional
+   ```
+2. In that author's articles, write `author: priya` in the front matter (the Pages CMS form has an *Author id* field).
+3. Authors appear on `/authors/`; each article links to its writer there.
+
+> The Pages CMS settings in `.pages.yml` were written from its documentation and have not been tried against the live service. If a form field looks wrong, the plain file way above always works.
+
+## Local checks before opening a pull request
+
+Run `bundle exec jekyll build` (it must finish without errors), look at the home page, Blog, an article and Authors at phone width (about 390 px) and desktop width (about 1366 px), and make sure the browser console is clean.
 
 ## Changing the Short
 
@@ -42,7 +88,7 @@ In `index.html`, find `youtube-nocookie.com/embed/` and replace the video ID (th
 
 ## Deploy with GitHub Pages
 
-Once only (already prepared in this repo: `CNAME` and `.nojekyll`):
+Once only (already prepared in this repo: `CNAME` and the Jekyll setup; there is no `.nojekyll` any more, so GitHub builds the site):
 
 1. On GitHub: **Settings → Pages**.
 2. **Source:** "Deploy from a branch". **Branch:** `main`, folder `/ (root)`. Save.

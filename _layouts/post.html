@@ -1,0 +1,39 @@
+---
+layout: default
+---
+{%- assign author = site.data.authors | where: "id", page.author | first -%}
+{%- assign words = page.content | number_of_words -%}
+{%- assign minutes = words | divided_by: 200.0 | ceil -%}
+{%- if minutes < 1 -%}{%- assign minutes = 1 -%}{%- endif -%}
+{%- capture share_url -%}{{ page.url | absolute_url }}{%- endcapture -%}
+{%- capture share_text -%}{{ page.title }} — Kuch Bhi Opinion{%- endcapture -%}
+<article class="section article" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="container article-inner">
+    <header class="article-head">
+      <h1 class="article-title" itemprop="headline">{{ page.title | escape }}</h1>
+      <p class="post-meta">
+        {%- if author %}<a href="{{ '/authors/' | relative_url }}#{{ author.id }}" rel="author">{{ author.name }}</a> · {% endif -%}
+        <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%-d %B %Y" }}</time> · {{ minutes }} min read
+      </p>
+      {%- if page.summary -%}<p class="article-summary">{{ page.summary | escape }}</p>{%- endif -%}
+    </header>
+    {%- if page.image -%}
+    <img class="article-cover" src="{{ page.image | relative_url }}" alt="" width="1200" height="630" itemprop="image">
+    {%- endif -%}
+    <div class="article-body" itemprop="articleBody">
+      {{ content }}
+    </div>
+    {%- if page.tags and page.tags.size > 0 -%}
+    <ul class="tag-list" aria-label="Tags">{% for tag in page.tags %}<li>{{ tag | escape }}</li>{% endfor %}</ul>
+    {%- endif -%}
+    <div class="share" role="group" aria-label="Share this article">
+      <span class="share-label">Share:</span>
+      <a class="btn" href="https://wa.me/?text={{ share_text | append: ' ' | append: share_url | url_encode }}" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn" href="https://twitter.com/intent/tweet?text={{ share_text | url_encode }}&amp;url={{ share_url | url_encode }}" target="_blank" rel="noopener">X</a>
+      <a class="btn" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener">Facebook</a>
+      <button class="btn" type="button" data-copy="{{ share_url }}" hidden>Copy link</button>
+      <span class="copy-status visually-hidden" role="status" aria-live="polite"></span>
+    </div>
+    <p class="section-cta"><a href="{{ '/blog/' | relative_url }}">← All articles</a></p>
+  </div>
+</article>

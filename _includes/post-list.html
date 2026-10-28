@@ -1,0 +1,21 @@
+{%- comment -%} Cards for a list of posts. Usage: {% include post-list.html posts=some_posts paged=9 %} {%- endcomment -%}
+<ul class="post-grid"{% if include.paged %} data-paged="{{ include.paged }}"{% endif %}>
+  {%- for post in include.posts -%}
+  {%- assign author = site.data.authors | where: "id", post.author | first -%}
+  <li>
+    <article class="post-card">
+      {%- if post.image -%}
+      <a class="post-card-cover" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true"><img src="{{ post.image | relative_url }}" alt="" width="1200" height="630" loading="lazy" decoding="async"></a>
+      {%- endif -%}
+      <div class="post-card-body">
+        <p class="post-meta"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%-d %b %Y" }}</time>{% if author %} · {{ author.name }}{% endif %}</p>
+        <h3 class="post-card-title"><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
+        {%- if post.summary -%}<p class="post-card-summary">{{ post.summary | escape }}</p>{%- endif -%}
+      </div>
+    </article>
+  </li>
+  {%- endfor -%}
+</ul>
+{%- if include.paged %}
+<p class="more-wrap"><button class="btn load-more" type="button" data-more hidden>Load more</button></p>
+{%- endif %}

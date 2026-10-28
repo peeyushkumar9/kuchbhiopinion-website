@@ -1,0 +1,8 @@
+# One entry per writer. Add a new "- id:" block to add an author.
+# id    : short lowercase name with no spaces; used in an article's front matter (author: sample-author)
+# name  : shown on the site
+# bio   : one line
+# photo : optional, e.g. /assets/authors/name.jpg (leave out for no photo)
+- id: sample-author
+  name: Sample Author
+  bio: "SAMPLE: replace this author with a real writer."

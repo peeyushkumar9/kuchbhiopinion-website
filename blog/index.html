@@ -1,0 +1,20 @@
+---
+layout: default
+title: Blog
+description: "Articles from Kuch Bhi Opinion: trending topics, relatable comedy and sarcasm. No politics. No hate. Sirf mazaa."
+permalink: /blog/
+---
+<section class="section blog-page" aria-labelledby="blog-title">
+  <div class="container">
+    <h1 id="blog-title" class="section-title">Blog</h1>
+    {% if site.posts.size > 0 %}
+    {% include post-list.html posts=site.posts paged=9 %}
+    {% else %}
+    <p class="muted">Pehla article jaldi aa raha hai.</p>
+    {% endif %}
+    <aside class="write-note" aria-labelledby="write-title">
+      <h2 id="write-title" class="write-title">Write for KBO</h2>
+      <p>Got something to say? Send your article to <a href="mailto:kuchbhiopinion@gmail.com">kuchbhiopinion@gmail.com</a>. Original work only, and strictly non-political. Every article is approved by the KBO team before it is published.</p>
+    </aside>
+  </div>
+</section>

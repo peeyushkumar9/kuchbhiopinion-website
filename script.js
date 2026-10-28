@@ -8,7 +8,9 @@
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  initPaging();
   initLightbox();
+  initCopyLink();
 
   // Mobile menu
   var toggle = document.querySelector(".nav-toggle");
@@ -43,12 +45,66 @@
   if (desktop.addEventListener) desktop.addEventListener("change", onChange);
   else if (desktop.addListener) desktop.addListener(onChange);
 
+  // "Load more": a list marked data-paged="N" shows N items, and the
+  // button after it reveals N more. Without JS everything stays visible.
+  function initPaging() {
+    var lists = document.querySelectorAll("[data-paged]");
+    Array.prototype.forEach.call(lists, function (list) {
+      var size = parseInt(list.getAttribute("data-paged"), 10) || 12;
+      var items = Array.prototype.slice.call(list.children);
+      var wrap = list.nextElementSibling;
+      var button = wrap && wrap.querySelector("[data-more]");
+      if (!button || items.length <= size) return;
+
+      var shown = size;
+      items.forEach(function (li, i) { li.hidden = i >= shown; });
+      button.hidden = false;
+
+      button.addEventListener("click", function () {
+        var first = shown;
+        shown = Math.min(shown + size, items.length);
+        for (var i = first; i < shown; i++) items[i].hidden = false;
+        if (shown >= items.length) {
+          button.hidden = true;
+        }
+        // keep keyboard focus on the first newly revealed item
+        var link = items[first].querySelector("a");
+        if (link) link.focus();
+      });
+    });
+  }
+
+  // Share buttons: "Copy link" only works with JS, so it starts hidden.
+  function initCopyLink() {
+    var buttons = document.querySelectorAll("[data-copy]");
+    Array.prototype.forEach.call(buttons, function (btn) {
+      if (!navigator.clipboard || !navigator.clipboard.writeText) return;
+      btn.hidden = false;
+      var status = btn.parentNode.querySelector(".copy-status");
+      btn.addEventListener("click", function () {
+        navigator.clipboard.writeText(btn.getAttribute("data-copy")).then(function () {
+          if (status) status.textContent = "Link copied";
+          btn.textContent = "Copied!";
+          setTimeout(function () { btn.textContent = "Copy link"; if (status) status.textContent = ""; }, 2000);
+        });
+      });
+    });
+  }
+
   // Meme lightbox: uses <dialog>. Without JS (or without <dialog>
   // support) each meme link simply opens the full image.
   function initLightbox() {
     var dialog = document.querySelector(".lightbox");
-    var links = Array.prototype.slice.call(document.querySelectorAll(".meme-grid .meme"));
-    if (!dialog || !links.length || typeof dialog.showModal !== "function") return;
+    var grid = document.querySelector(".meme-grid");
+    if (!dialog || !grid || typeof dialog.showModal !== "function") return;
+
+    // Only memes that are currently shown (not hidden behind "Load more")
+    function visibleLinks() {
+      return Array.prototype.filter.call(grid.querySelectorAll(".meme"), function (a) {
+        return !a.closest("li").hidden;
+      });
+    }
+    var links = visibleLinks();
 
     var img = dialog.querySelector(".lightbox-img");
     var caption = dialog.querySelector(".lightbox-caption");
@@ -63,14 +119,15 @@
       caption.textContent = (thumb ? thumb.alt : "") + " (" + (current + 1) + " / " + links.length + ")";
     }
 
-    links.forEach(function (link, i) {
-      link.addEventListener("click", function (e) {
-        e.preventDefault();
-        opener = link;
-        show(i);
-        dialog.showModal();
-        dialog.querySelector(".lb-close").focus();
-      });
+    grid.addEventListener("click", function (e) {
+      var link = e.target.closest(".meme");
+      if (!link) return;
+      e.preventDefault();
+      links = visibleLinks();
+      opener = link;
+      show(links.indexOf(link));
+      dialog.showModal();
+      dialog.querySelector(".lb-close").focus();
     });
 
     dialog.querySelector(".lb-prev").addEventListener("click", function () { show(current - 1); });

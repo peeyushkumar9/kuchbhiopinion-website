@@ -1,0 +1,28 @@
+---
+layout: default
+title: Authors
+description: "The writers of Kuch Bhi Opinion."
+permalink: /authors/
+---
+<section class="section authors-page" aria-labelledby="authors-title">
+  <div class="container">
+    <h1 id="authors-title" class="section-title">Authors</h1>
+    <ul class="author-list">
+      {%- for author in site.data.authors -%}
+      {%- assign theirs = site.posts | where: "author", author.id -%}
+      <li id="{{ author.id }}" class="author-card">
+        {%- if author.photo -%}<img class="author-photo" src="{{ author.photo | relative_url }}" alt="" width="96" height="96" loading="lazy">{%- endif -%}
+        <h2 class="author-name">{{ author.name | escape }}</h2>
+        <p class="author-bio">{{ author.bio | escape }}</p>
+        {%- if theirs.size > 0 -%}
+        <ul class="author-posts">
+          {%- for post in theirs -%}
+          <li><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a> <span class="muted">· {{ post.date | date: "%-d %b %Y" }}</span></li>
+          {%- endfor -%}
+        </ul>
+        {%- endif -%}
+      </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
