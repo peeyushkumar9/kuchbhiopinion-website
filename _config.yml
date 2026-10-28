@@ -1,0 +1,35 @@
+title: Kuch Bhi Opinion (KBO)
+tagline: "Trending topics, memes & sarcasm"
+description: "Kuch Bhi Opinion: roz ki life, viral khabrein aur relatable comedy, simple Hindi mein. Trending topics, memes & sarcasm. No politics. No hate. Sirf mazaa."
+url: https://kuchbhiopinion.com
+baseurl: ""
+lang: hi-Latn
+timezone: Asia/Kolkata
+logo: /assets/brand/KBO_profile_1080.png
+twitter:
+  username: KuchBhiOpinion
+  card: summary
+
+# Only plugins supported by GitHub Pages
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+permalink: /blog/:slug/
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /assets/brand/KBO_profile_1080.png
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - node_modules
+  - .bundle
+  - .pages.yml
+theme: null

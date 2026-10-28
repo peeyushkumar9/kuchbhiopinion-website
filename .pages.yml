@@ -1,0 +1,93 @@
+# Pages CMS config (https://pagescms.org): write articles and upload memes
+# in a browser form. Every save creates a commit or pull request on GitHub.
+
+media:
+  - name: memes
+    label: Memes
+    input: assets/memes
+    output: /assets/memes
+    extensions: [png, jpg, jpeg, webp]
+  - name: covers
+    label: Article images
+    input: assets/blog
+    output: /assets/blog
+    extensions: [png, jpg, jpeg, webp]
+  - name: authors
+    label: Author photos
+    input: assets/authors
+    output: /assets/authors
+    extensions: [png, jpg, jpeg, webp]
+
+content:
+  - name: posts
+    label: Articles
+    type: collection
+    path: _posts
+    filename: "{year}-{month}-{day}-{primary}.md"
+    format: yaml-frontmatter
+    view:
+      fields: [title, author, date]
+      primary: title
+      sort: [date]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: author
+        label: Author id
+        type: string
+        required: true
+        description: "Must match an id in the Authors list (for example sample-author)."
+      - name: date
+        label: Date
+        type: date
+        required: true
+        options:
+          time: true
+      - name: image
+        label: Cover image (1200 x 630)
+        type: image
+        media: covers
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: summary
+        label: Short summary (one or two lines)
+        type: text
+        required: true
+      - name: layout
+        type: string
+        hidden: true
+        default: post
+      - name: body
+        label: Article
+        type: rich-text
+
+  - name: authors
+    label: Authors
+    type: file
+    path: _data/authors.yml
+    format: yaml
+    list: true
+    fields:
+      - name: id
+        label: Author id (lowercase, no spaces)
+        type: string
+        required: true
+      - name: name
+        label: Name shown on the site
+        type: string
+        required: true
+      - name: bio
+        label: One-line bio
+        type: string
+        required: true
+      - name: photo
+        label: Photo (optional)
+        type: image
+        media: authors
