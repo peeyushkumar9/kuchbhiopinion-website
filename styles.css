@@ -236,6 +236,57 @@ a { color: var(--accent); }
   color: var(--bg);
 }
 
+.btn-solid {
+  background: var(--accent);
+  color: var(--bg);
+}
+.btn-solid:hover {
+  background: transparent;
+  color: var(--text);
+}
+
+/* ---------- Sections ---------- */
+
+.section {
+  padding: 56px 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.section-title {
+  margin: 0 0 24px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.75rem, 7vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.section-cta { margin: 24px 0 0; }
+
+/* ---------- Shorts ---------- */
+
+.short-frame {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  aspect-ratio: 9 / 16;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.short-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
 /* Empty sections, filled by later tasks */
 .section-anchor:empty { display: block; }
 
@@ -276,4 +327,8 @@ a { color: var(--accent); }
   .site-nav a { padding: 8px 0; font-size: 1.125rem; }
 
   .hero { padding: 80px 0 96px; }
+
+  .section { padding: 80px 0; }
+
+  .short-frame { max-width: 360px; }
 }
