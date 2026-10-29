@@ -11,6 +11,7 @@
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   initTheme();
+  initLogoTop();
   initTabSpy();
   initPaging();
   initLightbox();
@@ -18,6 +19,19 @@
   initCopyLink();
   initWords();
   initMenu();
+
+  // The logo takes you to the very top of the page, with the BREAKING strip
+  // showing. On the home page that is a scroll; on other pages the link loads
+  // the home page, which opens at the top.
+  function initLogoTop() {
+    var logo = document.querySelector(".nav .brand");
+    if (!logo || !document.getElementById("top")) return;
+    logo.addEventListener("click", function (e) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+      if (window.history && history.replaceState) history.replaceState(null, "", window.location.pathname + window.location.search);
+    });
+  }
 
   // Day / Night switch. The theme itself is set before first paint (inline script in
   // the page head); this wires up the button and keeps the label, the browser

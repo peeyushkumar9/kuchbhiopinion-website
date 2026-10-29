@@ -69,9 +69,16 @@ Without Pages CMS: add a file to `_posts/` named `YYYY-MM-DD-short-title.md`, co
 
 The ☀️/🌙 switch in the menu changes the whole site between Night (dark) and Day (cream). The first time someone visits, the site follows their phone or computer setting; after that it remembers their choice in the browser (nothing is sent anywhere). The colours for both modes are at the top of `styles.css` (`:root` for Night, `:root[data-theme="light"]` for Day). The tab highlight in the menu follows the section you are reading on the home page; on other pages the current page's tab is highlighted.
 
-### Change the ticker jokes
+### How to update the BREAKING news strip
 
-Edit `_data/ticker.yml` (Pages CMS: **Ticker**). Each item has a `tag` (the black label, such as Breaking, Live, Exclusive) and a `text` (the joke). Add, remove or reorder items; the ticker updates by itself. Keep it non-political.
+The orange strip under the menu shows one-line jokes. To change them:
+
+1. Open <https://app.pagescms.org>, sign in with GitHub and choose this repository.
+2. Click **Ticker (BREAKING jokes)**.
+3. Each item has a **label** (the black tag, such as Breaking, Live or Exclusive) and a **joke**. Edit them, add a new item, delete one or drag items to reorder.
+4. Click **Save**. The strip is live in about a minute.
+
+Without Pages CMS: edit `_data/ticker.yml` (same two fields per item). Keep it non-political.
 
 ### Add an author
 
