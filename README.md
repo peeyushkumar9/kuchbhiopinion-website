@@ -18,7 +18,7 @@ A static site built with **Jekyll as built in to GitHub Pages** (GitHub builds i
 | `memes/index.html` | The full meme gallery at `/memes/` (the home page shows the latest 10 in two sliding rows) |
 | `blog/index.html`, `authors/index.html` | The Blog page and the Authors page |
 | `styles.css`, `script.js` | All styles and behaviour (menu, lightbox, "Load more", copy link) |
-| `assets/brand/` | Logos and square profile image (also used for sharing previews) |
+| `assets/brand/` | Logos and square profile image (also used for sharing previews). The `*_280_transparent.png` logos are the ones in the menu: the light-text one for Night mode, the dark-text one for Day mode |
 | `assets/memes/` | Meme images; the gallery is built from this folder automatically |
 | `assets/blog/`, `assets/authors/` | Article cover images and author photos |
 | `assets/icons/`, `favicon.ico` | Favicons |
@@ -64,6 +64,10 @@ Without Pages CMS: add a file to `_posts/` named `YYYY-MM-DD-short-title.md`, co
 1. Make a 4:5 image (1080 × 1350 px, PNG).
 2. Name it `YYYY-MM-DD-short-name.png` (for example `2026-11-02-chai-break.png`). The date decides the order (newest first); the words after the date become the caption.
 3. Upload it to `assets/memes/` (Pages CMS: **Memes → Upload**, or GitHub: *Add file → Upload files*). That is all: no code to edit. The gallery shows 12 memes and a "Load more" button for the rest.
+
+### Day / Night switch
+
+The ☀️/🌙 switch in the menu changes the whole site between Night (dark) and Day (cream). The first time someone visits, the site follows their phone or computer setting; after that it remembers their choice in the browser (nothing is sent anywhere). The colours for both modes are at the top of `styles.css` (`:root` for Night, `:root[data-theme="light"]` for Day). The tab highlight in the menu follows the section you are reading on the home page; on other pages the current page's tab is highlighted.
 
 ### Change the ticker jokes
 

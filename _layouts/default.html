@@ -4,6 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#08080a">
+  <!-- Day / Night: set before first paint so the page never flashes the wrong theme.
+       First visit follows the device setting; after that the visitor's choice is remembered. -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("kbo-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", t);
+      var m = document.querySelector('meta[name="theme-color"]');
+      if (m) m.setAttribute("content", t === "light" ? "#faf6ee" : "#08080a");
+    })();
+  </script>
   {% seo %}
   {% feed_meta %}
 

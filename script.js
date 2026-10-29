@@ -10,12 +10,67 @@
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  initTheme();
+  initTabSpy();
   initPaging();
   initLightbox();
   initShortDialog();
   initCopyLink();
   initWords();
   initMenu();
+
+  // Day / Night switch. The theme itself is set before first paint (inline script in
+  // the page head); this wires up the button and keeps the label, the browser
+  // colour and the saved choice in step.
+  function initTheme() {
+    var root = document.documentElement;
+    var btn = document.getElementById("theme");
+    var meta = document.querySelector('meta[name="theme-color"]');
+    var saved = false;
+    try { var s = localStorage.getItem("kbo-theme"); saved = s === "light" || s === "dark"; } catch (e) {}
+
+    function apply(t, remember) {
+      root.setAttribute("data-theme", t);
+      if (btn) btn.setAttribute("aria-label", t === "light" ? "Switch to night mode" : "Switch to day mode");
+      if (meta) meta.setAttribute("content", t === "light" ? "#faf6ee" : "#08080a");
+      if (remember) { saved = true; try { localStorage.setItem("kbo-theme", t); } catch (e) {} }
+    }
+
+    apply(root.getAttribute("data-theme") === "light" ? "light" : "dark", false);
+    if (btn) btn.addEventListener("click", function () {
+      apply(root.getAttribute("data-theme") === "light" ? "dark" : "light", true);
+    });
+
+    // Until the visitor chooses, keep following the device setting
+    var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
+    function onDevice(e) { if (!saved) apply(e.matches ? "light" : "dark", false); }
+    if (mq) { if (mq.addEventListener) mq.addEventListener("change", onDevice); else if (mq.addListener) mq.addListener(onDevice); }
+  }
+
+  // Active tab. On the home page the tab follows the section you have scrolled
+  // to (Memes, Shorts, Blog). On other pages the server already marks the tab
+  // of the current page (Blog on /blog/ and articles, Memes on /memes/).
+  function initTabSpy() {
+    if (!document.getElementById("top")) return;
+    var tabs = Array.prototype.slice.call(document.querySelectorAll(".nav ul a[data-spy]"));
+    var sections = tabs.map(function (a) { return document.getElementById(a.getAttribute("data-spy")); });
+    if (!sections.some(Boolean)) return;
+
+    function spy() {
+      var cur = -1;
+      sections.forEach(function (s, i) {
+        if (s && s.getBoundingClientRect().top < window.innerHeight * 0.4) cur = i;
+      });
+      tabs.forEach(function (a, i) {
+        var on = i === cur;
+        a.classList.toggle("active", on);
+        if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current");
+      });
+    }
+    window.addEventListener("scroll", spy, { passive: true });
+    window.addEventListener("resize", spy);
+    spy();
+  }
 
   // Mobile menu (the floating pill shows a button under 720 px)
   function initMenu() {

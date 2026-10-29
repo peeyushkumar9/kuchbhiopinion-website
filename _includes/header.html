@@ -1,20 +1,23 @@
   <a class="skip-link" href="#main">Skip to content</a>
-
+{%- assign here = page.url -%}
   <header class="nav">
     <a class="brand" href="{{ '/' | relative_url }}#top" aria-label="Kuch Bhi Opinion — home">
-      <img src="{{ '/assets/brand/KBO_logo_dark_280.png' | relative_url }}" alt="" width="140" height="56">
+      <img class="logo-night" src="{{ '/assets/brand/KBO_logo_dark_280_transparent.png' | relative_url }}" alt="" width="140" height="56">
+      <img class="logo-day" src="{{ '/assets/brand/KBO_logo_light_280_transparent.png' | relative_url }}" alt="" width="140" height="56">
     </a>
     <nav id="site-nav" class="site-nav" aria-label="Main">
       <ul>
-        <li><a href="{{ '/' | relative_url }}#memes">Memes</a></li>
-        <li><a href="{{ '/' | relative_url }}#shorts">Shorts</a></li>
-        <li><a href="{{ '/blog/' | relative_url }}"{% if page.url contains '/blog/' %} aria-current="page"{% endif %}>Blog</a></li>
-        <li><a href="{{ '/' | relative_url }}#follow">Follow</a></li>
+        <li><a href="{{ '/' | relative_url }}#memes" data-spy="memes"{% if here == '/memes/' %} class="active" aria-current="page"{% endif %}>Memes</a></li>
+        <li><a href="{{ '/' | relative_url }}#shorts" data-spy="shorts">Shorts</a></li>
+        <li><a href="{{ '/blog/' | relative_url }}" data-spy="blog"{% if here contains '/blog/' %} class="active" aria-current="page"{% endif %}>Blog</a></li>
       </ul>
     </nav>
-    <a class="cta" href="{{ '/' | relative_url }}#follow">Follow KBO</a>
-    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-      <span class="nav-toggle-bar" aria-hidden="true"></span>
-      <span class="visually-hidden">Menu</span>
-    </button>
+    <div class="right">
+      <button class="theme" id="theme" type="button" aria-label="Switch to day mode" title="Day / Night"><span aria-hidden="true">☀️</span><span aria-hidden="true">🌙</span></button>
+      <a class="cta" href="{{ '/' | relative_url }}#follow">Follow KBO</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="visually-hidden">Menu</span>
+      </button>
+    </div>
   </header>
