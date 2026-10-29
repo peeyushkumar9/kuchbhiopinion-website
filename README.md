@@ -8,12 +8,14 @@ A static site built with **Jekyll as built in to GitHub Pages** (GitHub builds i
 
 | Path | What it is |
 | --- | --- |
-| `index.html` | Home page (front matter + sections: hero, Shorts, Memes, latest articles, Follow, Contact) |
+| `index.html` | Home page (hero, scroll words, Meme Corner, KBO Kids News, latest articles, Follow) |
 | `_layouts/` | `default.html` (page shell) and `post.html` (article page) |
-| `_includes/` | Header, footer, icons, lightbox, meme grid, article cards |
+| `_includes/` | Floating menu, ticker, footer, icons, lightbox, Short pop-up, meme rows/grid, article clippings |
 | `_config.yml` | Site title, URL, plugins (`jekyll-feed`, `jekyll-sitemap`, `jekyll-seo-tag`) |
 | `_posts/` | Articles (Markdown) |
 | `_data/authors.yml` | Authors (name, one-line bio, optional photo) |
+| `_data/ticker.yml` | The jokes in the orange BREAKING ticker under the menu |
+| `memes/index.html` | The full meme gallery at `/memes/` (the home page shows the latest 10 in two sliding rows) |
 | `blog/index.html`, `authors/index.html` | The Blog page and the Authors page |
 | `styles.css`, `script.js` | All styles and behaviour (menu, lightbox, "Load more", copy link) |
 | `assets/brand/` | Logos and square profile image (also used for sharing previews) |
@@ -63,6 +65,10 @@ Without Pages CMS: add a file to `_posts/` named `YYYY-MM-DD-short-title.md`, co
 2. Name it `YYYY-MM-DD-short-name.png` (for example `2026-11-02-chai-break.png`). The date decides the order (newest first); the words after the date become the caption.
 3. Upload it to `assets/memes/` (Pages CMS: **Memes → Upload**, or GitHub: *Add file → Upload files*). That is all: no code to edit. The gallery shows 12 memes and a "Load more" button for the rest.
 
+### Change the ticker jokes
+
+Edit `_data/ticker.yml` (Pages CMS: **Ticker**). Each item has a `tag` (the black label, such as Breaking, Live, Exclusive) and a `text` (the joke). Add, remove or reorder items; the ticker updates by itself. Keep it non-political.
+
 ### Add an author
 
 1. Pages CMS: **Authors → add an item**, or edit `_data/authors.yml` and add a block:
@@ -84,7 +90,7 @@ Run `bundle exec jekyll build` (it must finish without errors), look at the home
 
 ## Changing the Short
 
-In `index.html`, find `youtube-nocookie.com/embed/` and replace the video ID (the part after `/shorts/` in the YouTube link). Update the `title` too.
+The Short is played from the phone in the KBO Kids News block. Change the video ID (the part after `/shorts/` in the YouTube link) in two places: `data-src` in `_includes/short-dialog.html` and the `href` of the play button (`data-short`) in `index.html`. Update the `title` in the dialog too.
 
 ## Deploy with GitHub Pages
 

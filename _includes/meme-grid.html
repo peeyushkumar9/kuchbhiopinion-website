@@ -1,21 +1,55 @@
 {%- comment -%}
   Every image in assets/memes/, newest first (file names start with YYYY-MM-DD-).
   Caption = file name without the date, dashes/underscores turned into spaces.
+  mode "rows"  : the two sliding rows on the home page (latest 10 memes)
+  mode default : the full grid with Load more (the /memes/ page)
 {%- endcomment -%}
 {%- assign memes = site.static_files | where_exp: "f", "f.path contains '/assets/memes/'" | sort: "name" | reverse -%}
-<ul class="meme-grid" data-paged="12">
-  {%- for m in memes -%}
+{%- assign cards = "" -%}
+{%- assign shown = 0 -%}
+{%- for m in memes -%}
   {%- assign ext = m.extname | downcase -%}
   {%- if ext == ".png" or ext == ".jpg" or ext == ".jpeg" or ext == ".webp" -%}
-  {%- assign stem = m.basename -%}
-  {%- assign d4 = stem | slice: 4, 1 -%}{%- assign d7 = stem | slice: 7, 1 -%}{%- assign d10 = stem | slice: 10, 1 -%}
-  {%- if stem.size > 11 and d4 == "-" and d7 == "-" and d10 == "-" -%}
-    {%- assign stem = stem | slice: 11, 200 -%}
+    {%- if include.mode == "rows" and shown >= 10 -%}{%- break -%}{%- endif -%}
+    {%- assign shown = shown | plus: 1 -%}
+    {%- assign stem = m.basename -%}
+    {%- assign d4 = stem | slice: 4, 1 -%}{%- assign d7 = stem | slice: 7, 1 -%}{%- assign d10 = stem | slice: 10, 1 -%}
+    {%- if stem.size > 11 and d4 == "-" and d7 == "-" and d10 == "-" -%}
+      {%- assign stem = stem | slice: 11, 200 -%}
+    {%- endif -%}
+    {%- assign alt = stem | replace: "-", " " | replace: "_", " " | strip -%}
+    {%- assign a1 = alt | slice: 0, 1 | upcase -%}{%- assign a2 = alt | slice: 1, 200 -%}{%- assign alt = a1 | append: a2 | escape -%}
+    {%- capture card -%}<a class="@CLASS@" @ATTR@ href="{{ m.path | relative_url }}"><img src="{{ m.path | relative_url }}" alt="{{ alt }}" width="1080" height="1350" loading="lazy" decoding="async"></a>{%- endcapture -%}
+    {%- assign cards = cards | append: card | append: "|||" -%}
   {%- endif -%}
-  {%- assign alt = stem | replace: "-", " " | replace: "_", " " | strip -%}
-  {%- assign a1 = alt | slice: 0, 1 | upcase -%}{%- assign a2 = alt | slice: 1, 200 -%}{%- assign alt = a1 | append: a2 -%}
-  <li><a class="meme" href="{{ m.path | relative_url }}"><img src="{{ m.path | relative_url }}" alt="{{ alt | escape }}" width="1080" height="1350" loading="lazy" decoding="async"></a></li>
-  {%- endif -%}
-  {%- endfor -%}
-</ul>
-<p class="more-wrap"><button class="btn load-more" type="button" data-more hidden>Load more</button></p>
+{%- endfor -%}
+{%- assign list = cards | split: "|||" -%}
+{%- if include.mode == "rows" -%}
+  {%- assign half = list.size | plus: 1 | divided_by: 2 -%}
+  {%- assign rest = list.size | minus: half -%}
+  {%- assign row1 = list | slice: 0, half -%}
+  {%- assign row2 = list | slice: half, rest -%}
+  <div class="memes" data-memes>
+    {%- for row in (1..2) -%}
+      {%- if row == 1 -%}{%- assign items = row1 -%}{%- else -%}{%- assign items = row2 -%}{%- endif -%}
+      {%- assign copies = 4 -%}{%- if items.size < 5 -%}{%- assign copies = 8 -%}{%- endif -%}
+      <div class="mrow{% if row == 2 %} rev{% endif %}">
+        {%- for copy in (1..copies) -%}{%- for item in items -%}
+          {%- assign sign = forloop.index0 | modulo: 2 -%}
+          {%- assign deg = forloop.index0 | modulo: 3 | plus: 2 -%}
+          {%- if sign == 0 -%}{%- assign deg = deg | times: -1 -%}{%- endif -%}
+          {%- assign attr = 'data-lb style="--r:' | append: deg | append: 'deg"' -%}
+          {%- if copy > 1 -%}{%- assign attr = attr | append: ' data-dup aria-hidden="true" tabindex="-1"' -%}{%- endif -%}
+          {{ item | replace: "@CLASS@", "mcard" | replace: "@ATTR@", attr }}
+        {%- endfor -%}{%- endfor -%}
+      </div>
+    {%- endfor -%}
+  </div>
+{%- else -%}
+  <ul class="meme-grid" data-paged="12">
+    {%- for item in list -%}
+    <li>{{ item | replace: "@CLASS@", "meme" | replace: "@ATTR@", "data-lb" }}</li>
+    {%- endfor -%}
+  </ul>
+  <p class="more-wrap"><button class="btn btn-g load-more" type="button" data-more hidden>Load more</button></p>
+{%- endif -%}

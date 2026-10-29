@@ -7,18 +7,18 @@ layout: default
 {%- if minutes < 1 -%}{%- assign minutes = 1 -%}{%- endif -%}
 {%- capture share_url -%}{{ page.url | absolute_url }}{%- endcapture -%}
 {%- capture share_text -%}{{ page.title }} — Kuch Bhi Opinion{%- endcapture -%}
-<article class="section article" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="container article-inner">
+<article class="block page-top article" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="wrap article-inner">
+    <div class="a-mast"><span>KBO Times</span><time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%-d %B %Y" }}</time></div>
     <header class="article-head">
       <h1 class="article-title" itemprop="headline">{{ page.title | escape }}</h1>
-      <p class="post-meta">
-        {%- if author %}<a href="{{ '/authors/' | relative_url }}#{{ author.id }}" rel="author">{{ author.name }}</a> · {% endif -%}
-        <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%-d %B %Y" }}</time> · {{ minutes }} min read
+      <p class="by">
+        {%- if author %}By <a href="{{ '/authors/' | relative_url }}#{{ author.id }}" rel="author">{{ author.name }}</a>{% else %}By KBO Team{% endif %} · {{ minutes }} min read
       </p>
       {%- if page.summary -%}<p class="article-summary">{{ page.summary | escape }}</p>{%- endif -%}
     </header>
     {%- if page.image -%}
-    <img class="article-cover" src="{{ page.image | relative_url }}" alt="" width="1200" height="630" itemprop="image">
+    <div class="cover cover-lg"><div class="bg" style="background-image:url({{ page.image | relative_url }})"></div><img src="{{ page.image | relative_url }}" alt="" itemprop="image"></div>
     {%- endif -%}
     <div class="article-body" itemprop="articleBody">
       {{ content }}
@@ -28,12 +28,12 @@ layout: default
     {%- endif -%}
     <div class="share" role="group" aria-label="Share this article">
       <span class="share-label">Share:</span>
-      <a class="btn" href="https://wa.me/?text={{ share_text | append: ' ' | append: share_url | url_encode }}" target="_blank" rel="noopener">WhatsApp</a>
-      <a class="btn" href="https://twitter.com/intent/tweet?text={{ share_text | url_encode }}&amp;url={{ share_url | url_encode }}" target="_blank" rel="noopener">X</a>
-      <a class="btn" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener">Facebook</a>
-      <button class="btn" type="button" data-copy="{{ share_url }}" hidden>Copy link</button>
+      <a class="btn btn-g" href="https://wa.me/?text={{ share_text | append: ' ' | append: share_url | url_encode }}" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn btn-g" href="https://twitter.com/intent/tweet?text={{ share_text | url_encode }}&amp;url={{ share_url | url_encode }}" target="_blank" rel="noopener">X</a>
+      <a class="btn btn-g" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener">Facebook</a>
+      <button class="btn btn-g" type="button" data-copy="{{ share_url }}" hidden>Copy link</button>
       <span class="copy-status visually-hidden" role="status" aria-live="polite"></span>
     </div>
-    <p class="section-cta"><a href="{{ '/blog/' | relative_url }}">← All articles</a></p>
+    <p class="back"><a href="{{ '/blog/' | relative_url }}">← All articles</a></p>
   </div>
 </article>

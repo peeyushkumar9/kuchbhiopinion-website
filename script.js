@@ -1,8 +1,10 @@
-// Kuch Bhi Opinion — base behaviour
+// Kuch Bhi Opinion — behaviour (vanilla JS, no libraries)
 (function () {
   "use strict";
 
   document.documentElement.classList.remove("no-js");
+
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // Footer year
   var yearEl = document.getElementById("year");
@@ -10,40 +12,73 @@
 
   initPaging();
   initLightbox();
+  initShortDialog();
   initCopyLink();
+  initWords();
+  initMenu();
 
-  // Mobile menu
-  var toggle = document.querySelector(".nav-toggle");
-  var nav = document.getElementById("site-nav");
-  if (!toggle || !nav) return;
+  // Mobile menu (the floating pill shows a button under 720 px)
+  function initMenu() {
+    var toggle = document.querySelector(".nav-toggle");
+    var nav = document.getElementById("site-nav");
+    if (!toggle || !nav) return;
 
-  function setOpen(open) {
-    toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    nav.classList.toggle("is-open", open);
+    function setOpen(open) {
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      nav.classList.toggle("is-open", open);
+    }
+
+    toggle.addEventListener("click", function () {
+      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+
+    // Close after choosing a link
+    nav.addEventListener("click", function (e) {
+      if (e.target.closest("a")) setOpen(false);
+    });
+
+    // Close on Escape and return focus to the button
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    // Reset when resizing up to the desktop layout
+    var desktop = window.matchMedia("(min-width: 721px)");
+    function onChange(mq) { if (mq.matches) setOpen(false); }
+    if (desktop.addEventListener) desktop.addEventListener("change", onChange);
+    else if (desktop.addListener) desktop.addListener(onChange);
   }
 
-  toggle.addEventListener("click", function () {
-    setOpen(toggle.getAttribute("aria-expanded") !== "true");
-  });
+  // Scroll-assembled words: each word flies in and settles as you scroll.
+  // With reduced motion the words stay in place.
+  function initWords() {
+    var block = document.querySelector(".words");
+    var words = block ? Array.prototype.slice.call(block.querySelectorAll(".w")) : [];
+    if (!words.length) return;
 
-  // Close after choosing a link
-  nav.addEventListener("click", function (e) {
-    if (e.target.closest("a")) setOpen(false);
-  });
+    words.forEach(function (w, i) {
+      w.dataset.dx = ((i * 37) % 7 - 3) * 60;
+      w.dataset.dy = ((i * 53) % 5 - 2) * 40;
+      w.dataset.rot = ((i * 29) % 9 - 4) * 4;
+    });
 
-  // Close on Escape and return focus to the button
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
-      setOpen(false);
-      toggle.focus();
+    function onScroll() {
+      var s = block.getBoundingClientRect();
+      var p = 1 - (s.top + s.height * 0.3) / window.innerHeight;
+      p = Math.min(1, Math.max(0, p * 1.6));
+      var k = reduceMotion ? 0 : 1 - p;
+      words.forEach(function (w) {
+        w.style.transform = "translate(" + w.dataset.dx * k + "px," + w.dataset.dy * k + "px) rotate(" + w.dataset.rot * k + "deg)";
+        w.classList.toggle("hot", p > 0.85);
+      });
     }
-  });
-
-  // Reset when resizing up to the desktop layout
-  var desktop = window.matchMedia("(min-width: 768px)");
-  function onChange(mq) { if (mq.matches) setOpen(false); }
-  if (desktop.addEventListener) desktop.addEventListener("change", onChange);
-  else if (desktop.addListener) desktop.addListener(onChange);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    onScroll();
+  }
 
   // "Load more": a list marked data-paged="N" shows N items, and the
   // button after it reveals N more. Without JS everything stays visible.
@@ -64,9 +99,7 @@
         var first = shown;
         shown = Math.min(shown + size, items.length);
         for (var i = first; i < shown; i++) items[i].hidden = false;
-        if (shown >= items.length) {
-          button.hidden = true;
-        }
+        if (shown >= items.length) button.hidden = true;
         // keep keyboard focus on the first newly revealed item
         var link = items[first].querySelector("a");
         if (link) link.focus();
@@ -91,25 +124,26 @@
     });
   }
 
-  // Meme lightbox: uses <dialog>. Without JS (or without <dialog>
-  // support) each meme link simply opens the full image.
+  // Meme lightbox: uses <dialog>. Works for the home rows and the /memes/ grid.
+  // Without JS (or without <dialog> support) each meme link opens the full image.
   function initLightbox() {
     var dialog = document.querySelector(".lightbox");
-    var grid = document.querySelector(".meme-grid");
-    if (!dialog || !grid || typeof dialog.showModal !== "function") return;
-
-    // Only memes that are currently shown (not hidden behind "Load more")
-    function visibleLinks() {
-      return Array.prototype.filter.call(grid.querySelectorAll(".meme"), function (a) {
-        return !a.closest("li").hidden;
-      });
-    }
-    var links = visibleLinks();
+    if (!dialog || typeof dialog.showModal !== "function") return;
 
     var img = dialog.querySelector(".lightbox-img");
     var caption = dialog.querySelector(".lightbox-caption");
+    var links = [];
     var current = 0;
     var opener = null;
+
+    // The memes that can be paged through: no looping copies, none hidden by "Load more"
+    function collect() {
+      return Array.prototype.filter.call(document.querySelectorAll("a[data-lb]"), function (a) {
+        if (a.hasAttribute("data-dup")) return false;
+        var li = a.closest("li");
+        return !(li && li.hidden);
+      });
+    }
 
     function show(i) {
       current = (i + links.length) % links.length;
@@ -119,13 +153,16 @@
       caption.textContent = (thumb ? thumb.alt : "") + " (" + (current + 1) + " / " + links.length + ")";
     }
 
-    grid.addEventListener("click", function (e) {
-      var link = e.target.closest(".meme");
+    document.addEventListener("click", function (e) {
+      var link = e.target.closest("a[data-lb]");
       if (!link) return;
       e.preventDefault();
-      links = visibleLinks();
+      links = collect();
+      var href = link.getAttribute("href");
+      var index = 0;
+      links.forEach(function (l, i) { if (l.getAttribute("href") === href) index = i; });
       opener = link;
-      show(links.indexOf(link));
+      show(index);
       dialog.showModal();
       dialog.querySelector(".lb-close").focus();
     });
@@ -164,5 +201,31 @@
       startX = startY = null;
       if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) show(current + (dx < 0 ? 1 : -1));
     }, { passive: true });
+  }
+
+  // KBO Kids News: the play button opens the Short in a pop-up.
+  // The video is only loaded when it is opened. Without JS the button is a
+  // normal link to the Short on YouTube.
+  function initShortDialog() {
+    var dialog = document.querySelector(".short-dialog");
+    var play = document.querySelector("[data-short]");
+    if (!dialog || !play || typeof dialog.showModal !== "function") return;
+
+    var frame = dialog.querySelector("iframe");
+
+    play.addEventListener("click", function (e) {
+      e.preventDefault();
+      frame.src = frame.getAttribute("data-src");
+      dialog.showModal();
+      dialog.querySelector(".lb-close").focus();
+    });
+    dialog.querySelector(".lb-close").addEventListener("click", function () { dialog.close(); });
+    dialog.addEventListener("click", function (e) {
+      if (e.target === dialog) dialog.close();
+    });
+    dialog.addEventListener("close", function () {
+      frame.removeAttribute("src");
+      play.focus();
+    });
   }
 })();

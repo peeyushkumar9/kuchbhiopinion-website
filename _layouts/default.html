@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#141416">
+  <meta name="theme-color" content="#08080a">
   {% seo %}
   {% feed_meta %}
 
@@ -14,7 +14,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Caveat:wght@600&family=Playfair+Display:wght@800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ '/styles.css' | relative_url }}">
   <script src="{{ '/script.js' | relative_url }}" defer></script>
 </head>
@@ -22,6 +22,7 @@
   <!-- Icon sprite (simple outline icons, drawn for this site) -->
 {% include icons.html %}
 {% include header.html %}
+{% include ticker.html %}
   <main id="main">
 {{ content }}
   </main>
@@ -29,6 +30,9 @@
 {% include footer.html %}
 {% if page.lightbox %}
 {% include lightbox.html %}
+{% endif %}
+{% if page.short_dialog %}
+{% include short-dialog.html %}
 {% endif %}
 </body>
 </html>
