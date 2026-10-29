@@ -1,0 +1,8 @@
+{%- comment -%} Orange BREAKING ticker. Text comes from _data/ticker.yml. The list is printed twice so the loop is seamless. {%- endcomment -%}
+{%- if site.data.ticker.size > 0 -%}
+  <div class="ticker" aria-hidden="true"><div class="track">
+    {%- for pass in (1..2) -%}{%- for item in site.data.ticker %}
+    <span><b>{{ item.tag | escape }}</b>{{ item.text | escape }}</span>
+    {%- endfor -%}{%- endfor %}
+  </div></div>
+{%- endif -%}

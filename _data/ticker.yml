@@ -1,0 +1,11 @@
+# Jokes for the orange BREAKING ticker under the menu.
+# tag  : the black label (Breaking, Live, Exclusive ...)
+# text : the joke. Add, remove or reorder items; the ticker updates by itself.
+- tag: Breaking
+  text: 'Mummy ne kaha "5 minute"… intezaar abhi bhi jaari'
+- tag: Live
+  text: "WiFi ka mausam: shaam ko ghana kohra, video call par barish"
+- tag: Exclusive
+  text: "TV remote phir se laapata, sofa ke neeche khoj jaari"
+- tag: Breaking
+  text: "Monday alarm ne 3 baar snooze ke baad haar maani"

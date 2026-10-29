@@ -1,21 +1,23 @@
-{%- comment -%} Cards for a list of posts. Usage: {% include post-list.html posts=some_posts paged=9 %} {%- endcomment -%}
-<ul class="post-grid"{% if include.paged %} data-paged="{{ include.paged }}"{% endif %}>
+{%- comment -%} Newspaper-clipping cards. Usage: {% include post-list.html posts=some_posts paged=9 %} {%- endcomment -%}
+<ul class="clips"{% if include.paged %} data-paged="{{ include.paged }}"{% endif %}>
   {%- for post in include.posts -%}
   {%- assign author = site.data.authors | where: "id", post.author | first -%}
+  {%- assign minutes = post.content | number_of_words | divided_by: 200.0 | ceil -%}
+  {%- if minutes < 1 -%}{%- assign minutes = 1 -%}{%- endif -%}
+  {%- assign tilt = forloop.index0 | modulo: 2 -%}
   <li>
-    <article class="post-card">
-      {%- if post.image -%}
-      <a class="post-card-cover" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true"><img src="{{ post.image | relative_url }}" alt="" width="1200" height="630" loading="lazy" decoding="async"></a>
-      {%- endif -%}
-      <div class="post-card-body">
-        <p class="post-meta"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%-d %b %Y" }}</time>{% if author %} · {{ author.name }}{% endif %}</p>
-        <h3 class="post-card-title"><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
-        {%- if post.summary -%}<p class="post-card-summary">{{ post.summary | escape }}</p>{%- endif -%}
-      </div>
+    <article class="clip" style="--r:{% if tilt == 0 %}-1.5{% else %}1.2{% endif %}deg"><span class="pin" aria-hidden="true"></span>
+      <div class="masthead"><span>KBO Times</span><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%-d %b %Y" }}</time></div>
+      {%- if post.image %}
+      <div class="cover"><div class="bg" style="background-image:url({{ post.image | relative_url }})"></div><img src="{{ post.image | relative_url }}" alt="" width="1080" height="1350" loading="lazy" decoding="async"></div>
+      {%- endif %}
+      <h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
+      {%- if post.summary %}<p>{{ post.summary | escape }}</p>{% endif %}
+      <div class="by">By {% if author %}{{ author.name | escape }}{% else %}KBO Team{% endif %} · {{ minutes }} min read</div>
     </article>
   </li>
   {%- endfor -%}
 </ul>
 {%- if include.paged %}
-<p class="more-wrap"><button class="btn load-more" type="button" data-more hidden>Load more</button></p>
+<p class="more-wrap"><button class="btn btn-g load-more" type="button" data-more hidden>Load more</button></p>
 {%- endif %}

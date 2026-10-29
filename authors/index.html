@@ -4,9 +4,9 @@ title: Authors
 description: "The writers of Kuch Bhi Opinion."
 permalink: /authors/
 ---
-<section class="section authors-page" aria-labelledby="authors-title">
-  <div class="container">
-    <h1 id="authors-title" class="section-title">Authors</h1>
+<section class="block page-top" aria-labelledby="authors-title">
+  <div class="wrap">
+    <div class="shead"><div><span class="tag">Kaun likhta hai</span><h1 id="authors-title" class="h2">Authors</h1></div></div>
     <ul class="author-list">
       {%- for author in site.data.authors -%}
       {%- assign theirs = site.posts | where: "author", author.id -%}

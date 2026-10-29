@@ -8,15 +8,17 @@ A static site built with **Jekyll as built in to GitHub Pages** (GitHub builds i
 
 | Path | What it is |
 | --- | --- |
-| `index.html` | Home page (front matter + sections: hero, Shorts, Memes, latest articles, Follow, Contact) |
+| `index.html` | Home page (hero, scroll words, Meme Corner, KBO Kids News, latest articles, Follow) |
 | `_layouts/` | `default.html` (page shell) and `post.html` (article page) |
-| `_includes/` | Header, footer, icons, lightbox, meme grid, article cards |
+| `_includes/` | Floating menu, ticker, footer, icons, lightbox, Short pop-up, meme rows/grid, article clippings |
 | `_config.yml` | Site title, URL, plugins (`jekyll-feed`, `jekyll-sitemap`, `jekyll-seo-tag`) |
 | `_posts/` | Articles (Markdown) |
 | `_data/authors.yml` | Authors (name, one-line bio, optional photo) |
+| `_data/ticker.yml` | The jokes in the orange BREAKING ticker under the menu |
+| `memes/index.html` | The full meme gallery at `/memes/` (the home page shows the latest 10 in two sliding rows) |
 | `blog/index.html`, `authors/index.html` | The Blog page and the Authors page |
 | `styles.css`, `script.js` | All styles and behaviour (menu, lightbox, "Load more", copy link) |
-| `assets/brand/` | Logos and square profile image (also used for sharing previews) |
+| `assets/brand/` | Logos and square profile image (also used for sharing previews). The `*_280_transparent.png` logos are the ones in the menu: the light-text one for Night mode, the dark-text one for Day mode |
 | `assets/memes/` | Meme images; the gallery is built from this folder automatically |
 | `assets/blog/`, `assets/authors/` | Article cover images and author photos |
 | `assets/icons/`, `favicon.ico` | Favicons |
@@ -63,6 +65,21 @@ Without Pages CMS: add a file to `_posts/` named `YYYY-MM-DD-short-title.md`, co
 2. Name it `YYYY-MM-DD-short-name.png` (for example `2026-11-02-chai-break.png`). The date decides the order (newest first); the words after the date become the caption.
 3. Upload it to `assets/memes/` (Pages CMS: **Memes → Upload**, or GitHub: *Add file → Upload files*). That is all: no code to edit. The gallery shows 12 memes and a "Load more" button for the rest.
 
+### Day / Night switch
+
+The ☀️/🌙 switch in the menu changes the whole site between Night (dark) and Day (cream). The first time someone visits, the site follows their phone or computer setting; after that it remembers their choice in the browser (nothing is sent anywhere). The colours for both modes are at the top of `styles.css` (`:root` for Night, `:root[data-theme="light"]` for Day). The tab highlight in the menu follows the section you are reading on the home page; on other pages the current page's tab is highlighted.
+
+### How to update the BREAKING news strip
+
+The orange strip under the menu shows one-line jokes. To change them:
+
+1. Open <https://app.pagescms.org>, sign in with GitHub and choose this repository.
+2. Click **Ticker (BREAKING jokes)**.
+3. Each item has a **label** (the black tag, such as Breaking, Live or Exclusive) and a **joke**. Edit them, add a new item, delete one or drag items to reorder.
+4. Click **Save**. The strip is live in about a minute.
+
+Without Pages CMS: edit `_data/ticker.yml` (same two fields per item). Keep it non-political.
+
 ### Add an author
 
 1. Pages CMS: **Authors → add an item**, or edit `_data/authors.yml` and add a block:
@@ -84,7 +101,7 @@ Run `bundle exec jekyll build` (it must finish without errors), look at the home
 
 ## Changing the Short
 
-In `index.html`, find `youtube-nocookie.com/embed/` and replace the video ID (the part after `/shorts/` in the YouTube link). Update the `title` too.
+The Short is played from the phone in the KBO Kids News block. Change the video ID (the part after `/shorts/` in the YouTube link) in two places: `data-src` in `_includes/short-dialog.html` and the `href` of the play button (`data-short`) in `index.html`. Update the `title` in the dialog too.
 
 ## Deploy with GitHub Pages
 

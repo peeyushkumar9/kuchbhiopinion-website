@@ -91,3 +91,19 @@ content:
         label: Photo (optional)
         type: image
         media: authors
+
+  - name: ticker
+    label: Ticker (BREAKING jokes)
+    type: file
+    path: _data/ticker.yml
+    format: yaml
+    list: true
+    fields:
+      - name: tag
+        label: Black label (Breaking, Live, Exclusive ...)
+        type: string
+        required: true
+      - name: text
+        label: Joke
+        type: string
+        required: true
